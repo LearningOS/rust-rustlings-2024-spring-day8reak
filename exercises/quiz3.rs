@@ -16,18 +16,53 @@
 //
 // Execute `rustlings hint quiz3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
 
-pub struct ReportCard {
-    pub grade: f32,
+pub struct ReportCard<T> {
+    pub grade: T,
     pub student_name: String,
     pub student_age: u8,
-}
-
-impl ReportCard {
+} 
+/* 
+impl <T> ReportCard<T> {
     pub fn print(&self) -> String {
         format!("{} ({}) - achieved a grade of {}",
             &self.student_name, &self.student_age, &self.grade)
+    }
+    pub fn change_num_to_alp(self) -> ReportCard<&'static str> {
+        ReportCard {
+            grade: "A+",
+            student_name: self.student_name,
+            student_age: self.student_age,
+        }
+    }
+}*/
+impl ReportCard<f32> {
+    pub fn change_num_to_alphabetic(self) -> ReportCard<&'static str> {
+        let grade = match self.grade {
+            4.5..=5.5 => "A+",
+            4.0..=4.4 => "A+",
+            3.5..=3.9 => "A+",
+            3.0..=3.4 => "A+",
+            2.5..=2.9 => "A+",
+            2.0..=2.4 => "A+",
+            1.5..=1.9 => "A+",
+            1.0..=1.4 => "A+",
+            _ => "A+",
+        };
+        ReportCard {
+            grade,
+            student_name: self.student_name,
+            student_age: self.student_age,
+        }
+    }
+}
+
+impl<T: std::fmt::Display> ReportCard<T> {
+    pub fn print(&self) -> String {
+        format!(
+            "{} ({}) - achieved a grade of {}",
+            &self.student_name, &self.student_age, &self.grade
+        )
     }
 }
 
@@ -51,11 +86,12 @@ mod tests {
     #[test]
     fn generate_alphabetic_report_card() {
         // TODO: Make sure to change the grade here after you finish the exercise.
+        
         let report_card = ReportCard {
             grade: 2.1,
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
-        };
+        }.change_num_to_alphabetic();
         assert_eq!(
             report_card.print(),
             "Gary Plotter (11) - achieved a grade of A+"
