@@ -2,11 +2,10 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
-use std::vec::*;
+//use std::vec::*;
 
 #[derive(Debug)]
 struct Node<T> {
@@ -69,17 +68,46 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
-        }
-	}
-}
+	pub fn merge(list_a: LinkedList<T>, list_b: LinkedList<T>) -> Self
+    where
+        T: Clone + PartialOrd,
+    {
+        let mut merged_list =  LinkedList::<T>::new();
 
+        let mut a_iter = list_a.start;
+        let mut b_iter = list_b.start;
+
+        loop {
+            match (a_iter, b_iter) {
+                (Some(a_node), Some(b_node)) => {
+                    let a_val = unsafe { a_node.as_ref().val.clone() };
+                    let b_val = unsafe { b_node.as_ref().val.clone() };
+
+                    if a_val <= b_val {
+                        merged_list.add(a_val);
+                        a_iter = unsafe { a_node.as_ref().next };
+                    } else {
+                        merged_list.add(b_val);
+                        b_iter = unsafe { b_node.as_ref().next };
+                    }
+                }
+                (Some(a_node), None) => {
+                    let a_val = unsafe { a_node.as_ref().val.clone() };
+                    merged_list.add(a_val);
+                    a_iter = unsafe { a_node.as_ref().next };
+                }
+                (None, Some(b_node)) => {
+                    let b_val = unsafe { b_node.as_ref().val.clone() };
+                    merged_list.add(b_val);
+                    b_iter = unsafe { b_node.as_ref().next };
+                }
+                (None, None) => break,
+            }
+        }
+
+        merged_list
+    }
+}
 impl<T> Display for LinkedList<T>
 where
     T: Display,
